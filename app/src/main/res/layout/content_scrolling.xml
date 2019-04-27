@@ -13,32 +13,55 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="189dp"
-            android:layout_height="143dp"
-            app:srcCompat="@drawable/park1" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="208dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/parkBike"
-         />
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_marginTop="@dimen/fab_margin"
+                android:layout_marginLeft="@dimen/fab_margin"
+                android:id="@+id/imageView1"
+                android:layout_width="189dp"
+                android:layout_height="143dp"
+                app:srcCompat="@drawable/park1" />
+
+            <ImageView
+                android:layout_marginTop="@dimen/fab_margin"
+                android:layout_marginRight="@dimen/fab_margin"
+                android:id="@+id/imageView2"
+                android:layout_width="208dp"
+                android:layout_height="match_parent"
+                app:srcCompat="@drawable/parkbike"
+                />
 
 
-    </LinearLayout>
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:text="@string/large_text" />
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@string/large_text"
+                android:layout_column="0"
+                android:layout_row="0"/>
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="@dimen/text_margin"
+                app:srcCompat="@drawable/googlemaps"
+                android:layout_column="2"
+                android:layout_row="0"/>
+
+
+        </GridLayout>
+
 
         <View style="@style/Divider"/>
 
@@ -56,7 +79,7 @@
             android:layout_margin="@dimen/text_margin"
             android:text="Facilities"
             android:textStyle="bold"
-            android:textSize="30dp"
+            android:textSize="20dp"
             />
 
         <GridLayout
@@ -67,7 +90,8 @@
                 android:id="@+id/imageView3"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                app:srcCompat="@drawable/Playground"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/playground"
                 android:layout_column="0"
                 android:layout_row="0"/>
             <TextView
@@ -82,7 +106,8 @@
                 android:id="@+id/imageView4"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                app:srcCompat="@drawable/Bicycle"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/bicycle"
                 android:layout_column="0"
                 android:layout_row="2"/>
 
@@ -99,11 +124,15 @@
         <View style="@style/Divider"/>
 
         <TextView
+            android:layout_margin="2dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Reviews"
-         />
+            android:textStyle="bold"
+            android:textSize="20dp"
+            />
         <TextView
+            android:layout_margin="1dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/review1"
