@@ -1,5 +1,16 @@
 <resources>
-    <string name="app_name" translatable="false">ParkFinder</string>
+    <string name="app_name" translatable="true">ParkFinder</string>
     <string name="title_activity_maps">Map</string>
     <string name="google_maps_key">AIzaSyA1kpVZHTAOCmf0ghTDNEREtWnWsXoFryg</string>
+
+
+    <string name="large_text">Open: 9am - 8pm </string>
+
+    <string name="description">Stanley Park features a walking track, a playground and a children\'s cycle.</string>
+
+    <string name="review1">"\n Big park with plenty of room to run and play. ""\n \n Great local park for young kids on a weekend morning play session. Slides, monkey Bar, big swing, climbing apparatus etc. You can even find a small bike track here." </string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_scrolling2">ScrollingActivity2</string>
 </resources>
