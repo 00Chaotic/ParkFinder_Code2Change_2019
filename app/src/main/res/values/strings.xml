@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">ParkFinder</string>
+    <string name="app_name" translatable="false">ParkFinder</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
