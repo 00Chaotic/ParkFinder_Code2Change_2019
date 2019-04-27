@@ -1,9 +1,13 @@
 package com.example.parkfinder;
 
+import android.renderscript.Sampler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,6 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter_column);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -55,11 +60,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
+        getParkCoords(ref);
+
+        CheckBox bbqFilter = (CheckBox) findViewById(R.id.f_bbq);
+        CheckBox toiletFilter = (CheckBox) findViewById(R.id.f_tl);
+        CheckBox petFilter = (CheckBox) findViewById(R.id.f_pf);
+
+        bbqFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkForBbqs(googleMap, ref);
+            }
+        });
+
+        toiletFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkForToilets(googleMap, ref);
+            }
+        });
+
+        petFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkForPets(googleMap, ref);
+            }
+        });
+
+        //KILL ME NOW
+    }
+
+    public void getParkCoords(DatabaseReference ref) {
         DatabaseReference hunterParkLatitude = ref.child("Parks").child("Hunter Park").child("Latitude");
         DatabaseReference hunterParkLongitude = ref.child("Parks").child("Hunter Park").child("Longitude");
         DatabaseReference memoryParkLatitude = ref.child("Parks").child("Memory Park").child("Latitude");
@@ -138,13 +174,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.w(TAG, "getMiddleHeadLon:onCancelled", databaseError.toException());
             }
         });
-
-        //KILL ME NOW
-
-
     }
 
-    public void hasBbqs(GoogleMap googleMap, DatabaseReference ref) {
+    public void checkForBbqs(GoogleMap googleMap, DatabaseReference ref) {
         mMap = googleMap;
 
         DatabaseReference hunterParkBbq = ref.child("Parks").child("Hunter Park").child("BBQ");
@@ -200,7 +232,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    public void hasToilets(GoogleMap googleMap, DatabaseReference ref) {
+    public void checkForToilets(GoogleMap googleMap, DatabaseReference ref) {
         mMap = googleMap;
 
         DatabaseReference hunterParkToilets = ref.child("Parks").child("Hunter Park").child("Toilets");
@@ -256,7 +288,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    public void isPetFriendly(GoogleMap googleMap, DatabaseReference ref) {
+    public void checkForPets(GoogleMap googleMap, DatabaseReference ref) {
         mMap = googleMap;
 
         DatabaseReference hunterParkPets = ref.child("Parks").child("Hunter Park").child("Pet Friendly");
