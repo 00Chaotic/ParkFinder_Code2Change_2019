@@ -23,6 +23,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private static final String TAG = "MapActivity";
 
+    double hunterParkLat;
+    double hunterParkLon;
+    double memoryParkLat;
+    double memoryParkLon;
+    double middleHeadLat;
+    double middleHeadLon;
+
+    LatLng hunterPark = new LatLng(hunterParkLat, hunterParkLon);
+    LatLng memoryPark = new LatLng(memoryParkLat, memoryParkLon);
+    LatLng middleHead = new LatLng(middleHeadLat, middleHeadLon);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,25 +58,257 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-        myRef.setValue("K!");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        DatabaseReference hunterParkLatitude = ref.child("Parks").child("Hunter Park").child("Latitude");
+        DatabaseReference hunterParkLongitude = ref.child("Parks").child("Hunter Park").child("Longitude");
+        DatabaseReference memoryParkLatitude = ref.child("Parks").child("Memory Park").child("Latitude");
+        DatabaseReference memoryParkLongitude = ref.child("Parks").child("Memory Park").child("Longitude");
+        DatabaseReference middleHeadLatitude = ref.child("Parks").child("Middle Head").child("Latitude");
+        DatabaseReference middleHeadLongitude = ref.child("Parks").child("Middle Head").child("Longitude");
+
+        hunterParkLatitude.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String s = dataSnapshot.getValue(String.class);
+                hunterParkLat = dataSnapshot.getValue(Double.class);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Log.w(TAG, "getHunterParkLat:onCancelled", databaseError.toException());
             }
         });
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        hunterParkLongitude.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                hunterParkLon = dataSnapshot.getValue(Double.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getHunterParkLon:onCancelled", databaseError.toException());
+            }
+        });
+
+        memoryParkLatitude.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                memoryParkLat = dataSnapshot.getValue(Double.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMemoryParkLat:onCancelled", databaseError.toException());
+            }
+        });
+
+        memoryParkLongitude.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                memoryParkLon = dataSnapshot.getValue(Double.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMemoryParkLon:onCancelled", databaseError.toException());
+            }
+        });
+
+        middleHeadLatitude.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                middleHeadLat = dataSnapshot.getValue(Double.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMiddleHeadLat:onCancelled", databaseError.toException());
+            }
+        });
+
+        middleHeadLongitude.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                middleHeadLon = dataSnapshot.getValue(Double.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMiddleHeadLon:onCancelled", databaseError.toException());
+            }
+        });
+
+        //KILL ME NOW
+
+
+    }
+
+    public void hasBbqs(GoogleMap googleMap, DatabaseReference ref) {
+        mMap = googleMap;
+
+        DatabaseReference hunterParkBbq = ref.child("Parks").child("Hunter Park").child("BBQ");
+        DatabaseReference memoryParkBbq = ref.child("Parks").child("Memory Park").child("BBQ");
+        DatabaseReference middleHeadBbq = ref.child("Parks").child("Middle Head").child("BBQ");
+
+        hunterParkBbq.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean hasBbq = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (hasBbq) {
+                    mMap.addMarker(new MarkerOptions().position(hunterPark).title("Hunter Park"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(hunterPark));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getHunterParkCoords:onCancelled", databaseError.toException());
+            }
+        });
+
+        memoryParkBbq.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean hasBbq = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (hasBbq) {
+                    mMap.addMarker(new MarkerOptions().position(memoryPark).title("Memory Park"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(memoryPark));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMemoryParkCoords:onCancelled", databaseError.toException());
+            }
+        });
+
+        middleHeadBbq.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean hasBbq = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (hasBbq) {
+                    mMap.addMarker(new MarkerOptions().position(middleHead).title("Middle Head"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(middleHead));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMiddleHeadCoords:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public void hasToilets(GoogleMap googleMap, DatabaseReference ref) {
+        mMap = googleMap;
+
+        DatabaseReference hunterParkToilets = ref.child("Parks").child("Hunter Park").child("Toilets");
+        DatabaseReference memoryParkToilets = ref.child("Parks").child("Memory Park").child("Toilets");
+        DatabaseReference middleHeadToilets = ref.child("Parks").child("Middle Head").child("Toilets");
+
+        hunterParkToilets.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean hasToilets = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (hasToilets) {
+                    mMap.addMarker(new MarkerOptions().position(hunterPark).title("Hunter Park"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(hunterPark));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getHunterParkCoords:onCancelled", databaseError.toException());
+            }
+        });
+
+        memoryParkToilets.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean hasToilets = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (hasToilets) {
+                    mMap.addMarker(new MarkerOptions().position(memoryPark).title("Memory Park"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(memoryPark));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMemoryParkCoords:onCancelled", databaseError.toException());
+            }
+        });
+
+        middleHeadToilets.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean hasToilets = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (hasToilets) {
+                    mMap.addMarker(new MarkerOptions().position(middleHead).title("Middle Head"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(middleHead));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMiddleHeadCoords:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    public void isPetFriendly(GoogleMap googleMap, DatabaseReference ref) {
+        mMap = googleMap;
+
+        DatabaseReference hunterParkPets = ref.child("Parks").child("Hunter Park").child("Pet Friendly");
+        DatabaseReference memoryParkPets = ref.child("Parks").child("Memory Park").child("Pet Friendly");
+        DatabaseReference middleHeadPets = ref.child("Parks").child("Middle Head").child("Pet Friendly");
+
+        hunterParkPets.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean isPetFriendly = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (isPetFriendly) {
+                    mMap.addMarker(new MarkerOptions().position(hunterPark).title("Hunter Park"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(hunterPark));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getHunterParkCoords:onCancelled", databaseError.toException());
+            }
+        });
+
+        memoryParkPets.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean isPetFriendly = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (isPetFriendly) {
+                    mMap.addMarker(new MarkerOptions().position(memoryPark).title("Memory Park"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(memoryPark));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMemoryParkCoords:onCancelled", databaseError.toException());
+            }
+        });
+
+        middleHeadPets.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean isPetFriendly = Boolean.parseBoolean(dataSnapshot.getValue(String.class));
+                if (isPetFriendly) {
+                    mMap.addMarker(new MarkerOptions().position(middleHead).title("Middle Head"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(middleHead));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w(TAG, "getMiddleHeadCoords:onCancelled", databaseError.toException());
+            }
+        });
     }
 }
