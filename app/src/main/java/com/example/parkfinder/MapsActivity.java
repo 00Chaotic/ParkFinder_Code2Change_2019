@@ -1,33 +1,52 @@
 package com.example.parkfinder;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.PlaceDetectionClient;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.location.places.PlaceDetectionClient;
-import com.google.android.gms.location.places.PlaceLikelihood;
-import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
-import com.google.android.libraries.places.api.Places;
+
+//import com.google.android.gms.location.places.Places;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+
+    // Used for selecting the current place.
+    private static final int M_MAX_ENTRIES = 5;
+    private String[] mLikelyPlaceNames;
+    private String[] mLikelyPlaceAddresses;
+    private String[] mLikelyPlaceAttributions;
+    private LatLng[] mLikelyPlaceLatLngs;
+
+    // The entry points to the Places API.
+    private GeoDataClient mGeoDataClient;
+    private PlaceDetectionClient mPlaceDetectionClient;
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     // The entry point to the Fused Location Provider.
@@ -46,16 +65,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
 
+    public MapsActivity() {
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Initialize Places.
+        //Places.initialize(getApplicationContext(), "AIzaSyBRjwqe_Qe9TbCp_CrZbIAAnr5U7O__tuc");
+
+
+
+        // Construct a GeoDataClient.
+        //mGeoDataClient = Places.getGeoDataClient(this, null);
+
+        // Construct a PlaceDetectionClient.
+       // mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+
+        // Construct a FusedLocationProviderClient.
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Build the map.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(this);
+
+
+
     }
 
 
@@ -71,6 +113,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        // Use a custom info window adapter to handle multiple lines of text in the
+        // info window contents.
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            @Override
+            // Return null here, so that getInfoContents() is called next.
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Inflate the layouts for the info window, title and snippet.
+                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                        (FrameLayout) findViewById(R.id.map), false);
+
+                TextView title = ((TextView) infoWindow.findViewById(R.id.title));
+                title.setText(marker.getTitle());
+
+                TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
+                snippet.setText(marker.getSnippet());
+
+                return infoWindow;
+            }
+        });
 
         // Add a marker in Sydney and move the camera
         //LatLng sydney = new LatLng(-34, 151);
@@ -95,6 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
+                            assert mLastKnownLocation != null;
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
@@ -167,6 +236,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * @param item The menu item to handle.
      * @return Boolean.
      */
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.option_get_place) {
@@ -174,6 +244,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return true;
     }
+
 
 
 
@@ -251,4 +322,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             getLocationPermission();
         }
     }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mMap != null) {
+            outState.putParcelable(KEY_CAMERA_POSITION, mMap.getCameraPosition());
+            outState.putParcelable(KEY_LOCATION, mLastKnownLocation);
+            super.onSaveInstanceState(outState);
+        }
+    }
+
+
+
+    private void openPlacesDialog() {
+        // Ask the user to choose the place where they are now.
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // The "which" argument contains the position of the selected item.
+                LatLng markerLatLng = mLikelyPlaceLatLngs[which];
+                String markerSnippet = mLikelyPlaceAddresses[which];
+                if (mLikelyPlaceAttributions[which] != null) {
+                    markerSnippet = markerSnippet + "\n" + mLikelyPlaceAttributions[which];
+                }
+
+                // Add a marker for the selected place, with an info window
+                // showing information about that place.
+                mMap.addMarker(new MarkerOptions()
+                        .title(mLikelyPlaceNames[which])
+                        .position(markerLatLng)
+                        .snippet(markerSnippet));
+
+                // Position the map's camera at the location of the marker.
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
+                        DEFAULT_ZOOM));
+            }
+        };
+
+        // Display the dialog.
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.pick_place)
+                .setItems(mLikelyPlaceNames, listener)
+                .show();
+    }
+
 }
