@@ -34,9 +34,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double middleHeadLat;
     double middleHeadLon;
 
-    LatLng hunterPark = new LatLng(hunterParkLat, hunterParkLon);
-    LatLng memoryPark = new LatLng(memoryParkLat, memoryParkLon);
-    LatLng middleHead = new LatLng(middleHeadLat, middleHeadLon);
+    LatLng hunterPark;
+    LatLng memoryPark;
+    LatLng middleHead;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +174,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.w(TAG, "getMiddleHeadLon:onCancelled", databaseError.toException());
             }
         });
+
+        hunterPark = new LatLng(hunterParkLat, hunterParkLon);
+        memoryPark = new LatLng(memoryParkLat, memoryParkLon);
+        middleHead = new LatLng(middleHeadLat, middleHeadLon);
     }
 
     public void checkForBbqs(GoogleMap googleMap, DatabaseReference ref) {
