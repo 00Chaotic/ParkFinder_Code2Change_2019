@@ -41,19 +41,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:checked="true"
-                android:onClick="setZoomButtonsEnabled"
+                android:checked="false"
                 android:text="Barbeque"
                 android:buttonTint="#08356B"/>
 
             <CheckBox
-                android:id="@+id/f_rr"
+                android:id="@+id/f_tl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:checked="true"
-                android:onClick="setCompassEnabled"
-                android:text="Restrooms"
+                android:checked="false"
+                android:text="Toilets"
                 android:buttonTint="#08356B"/>
 
             <CheckBox
@@ -62,7 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:checked="false"
-                android:onClick="setMyLocationButtonEnabled"
                 android:text="Pet-Friendly"
                 android:buttonTint="#08356B"/>
 
@@ -71,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:checked="true"
+                android:checked="false"
                 android:onClick="setMyLocationLayerEnabled"
                 android:text="Disability Access"
                 android:buttonTint="#FFFFFF"/>
@@ -90,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:checked="true"
+                android:checked="false"
                 android:onClick="setZoomGesturesEnabled"
                 android:text="Bicycle Stands" />
 
@@ -99,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:checked="true"
+                android:checked="false"
                 android:onClick="setTiltGesturesEnabled"
                 android:text="Playground" />
 
