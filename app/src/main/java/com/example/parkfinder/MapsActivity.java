@@ -71,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.ui_settings_demo);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -141,8 +141,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        LatLng sydney = new LatLng(-33.879, 151.1940);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Wentworth Park"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         getLocationPermission();
         updateLocationUI();
@@ -166,7 +166,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             assert mLastKnownLocation != null;
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                                            mLastKnownLocation.getLongitude()), 5));
+
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-33.879, 151.1940),15));
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
